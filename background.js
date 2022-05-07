@@ -5,7 +5,6 @@ setInterval(() => {
     var tab = tabs[Math.floor(Math.random() * tabs.length)];
 
     console.log(tab.url)
-    // chrome.tabs.update(tab.id, {active: true});
     chrome.tabs.reload(tab.id);
 
     const d = new Date();
@@ -13,7 +12,6 @@ setInterval(() => {
     let hours = d.getHours();
 
     let time = hours + ":" + minutes;
-
 
     var value = tab.url;
     var obj= {};
