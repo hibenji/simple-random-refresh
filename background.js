@@ -1,4 +1,4 @@
-chrome.alarms.create({ periodInMinutes: 0.2 })
+chrome.alarms.create({ periodInMinutes: 0.5 })
 chrome.alarms.onAlarm.addListener(() => {
   chrome.tabs.query({}, function(tabs) { 
 

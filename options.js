@@ -1,4 +1,4 @@
-chrome.alarms.create({ periodInMinutes: 0.1 })
+chrome.alarms.create({ periodInMinutes: 0.05 })
 chrome.alarms.onAlarm.addListener(() => {
     chrome.storage.local.get(function(items){
         stuff = JSON.stringify(items);
