@@ -15,6 +15,6 @@
   "icons": {
     "16": "refresh.png"
   },
-  "permissions": ["backgroud", "storage", "activeTab", "scripting", "tabs", "unlimitedStorage"]
+  "permissions": ["alarms", "storage", "activeTab", "scripting", "tabs", "unlimitedStorage"]
 
 }
