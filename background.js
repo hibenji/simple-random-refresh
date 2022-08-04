@@ -1,10 +1,10 @@
-chrome.alarms.create({ periodInMinutes: 2 });
+chrome.alarms.create({ periodInMinutes: 0.1 });
 chrome.alarms.onAlarm.addListener(() => {
   chrome.tabs.query({}, function(tabs) { 
 
     var tab = tabs[Math.floor(Math.random() * tabs.length)];
 
-    console.log(tab.url)
+    // console.log(tab.url)
     chrome.tabs.reload(tab.id);
 
     const d = new Date();

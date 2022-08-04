@@ -15,6 +15,9 @@
   "icons": {
     "16": "refresh.png"
   },
-  "permissions": ["alarms", "storage", "activeTab", "scripting", "tabs", "unlimitedStorage"]
+  "host_permissions": [
+    "*://*/*"
+  ],
+  "permissions": ["alarms", "storage", "activeTab", "scripting", "tabs", "unlimitedStorage", "cookies"]
 
 }
