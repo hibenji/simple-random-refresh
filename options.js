@@ -1,8 +1,13 @@
-reload_time = 1;
+// clear all alarms
+
+chrome.alarms.clearAll();
+chrome.storage.local.clear();
+chrome.storage.sync.clear();
+
+
+reload_time = 0.2;
 var actual_time;
 
-
-chrome.alarms.create({ periodInMinutes: 1 })
 
 chrome.cookies.set({
     url: 'https://core.arc.io',
@@ -60,8 +65,4 @@ function get() {
 }
 
 get();
-
-chrome.alarms.onAlarm.addListener(() => {
-  get();
-});
 
