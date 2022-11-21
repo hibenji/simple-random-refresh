@@ -1,3 +1,7 @@
+reload_time = 1;
+var actual_time;
+
+
 chrome.alarms.create({ periodInMinutes: 1 })
 
 chrome.cookies.set({
@@ -12,6 +16,15 @@ chrome.cookies.set({
 }, function(cookie) {
   console.log("Cookie set: " + cookie);
 });
+
+
+chrome.tabs.query({}, function(tabs) { 
+  var actual_time = reload_time / tabs.length;
+  console.log("time = " + actual_time); 
+  chrome.alarms.create("reload", {periodInMinutes: actual_time});
+});
+
+
 
 // new function
 function get() {

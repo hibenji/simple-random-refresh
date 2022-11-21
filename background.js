@@ -1,3 +1,6 @@
+// time to reload each website
+chrome.alarms.clearAll();
+
 chrome.cookies.set({
   url: 'https://core.arc.io',
   domain: ".arc.io",
@@ -11,27 +14,43 @@ chrome.cookies.set({
 console.log("Cookie set: " + cookie);
 });
 
+i = 0
 
-chrome.alarms.create({ periodInMinutes: 1.5 });
-chrome.alarms.onAlarm.addListener(() => {
-  chrome.tabs.query({}, function(tabs) { 
 
-    var tab = tabs[Math.floor(Math.random() * tabs.length)];
+// listen for alarm
+chrome.alarms.onAlarm.addListener(function(alarm) {
+  console.log(alarm);
+  if (alarm.name == "reload") {
+    chrome.tabs.query({}, function(tabs) { 
 
-    // console.log(tab.url)
-    chrome.tabs.reload(tab.id);
+      console.log("i = " + i);
+      // console.log(tabs);
+      var tab = tabs[i];
+  
 
-    const d = new Date();
-    let minutes = d.getMinutes();
-    let hours = d.getHours();
-
-    let time = hours + ":" + minutes;
-
-    var value = tab.url;
-    var obj= {};
-    obj[value] = time;
-
-    chrome.storage.local.set(obj);
-    
-  });
+      if (i < tabs.length - 1) {
+        i++;
+      } else {
+        i = 0;
+      }
+  
+  
+      // console.log(tab.url)
+      chrome.tabs.reload(tab.id);
+  
+      const d = new Date();
+      let minutes = d.getMinutes();
+      let hours = d.getHours();
+  
+      let time = hours + ":" + minutes;
+  
+      var value = tab.url;
+      var obj= {};
+      obj[value] = time;
+  
+      chrome.storage.local.set(obj);
+      
+    });
+  }
+   
 });
