@@ -1,56 +1,118 @@
-// time to reload each website
-chrome.alarms.clearAll();
+var reload_time = 20;
 
-chrome.cookies.set({
-  url: 'https://core.arc.io',
-  domain: ".arc.io",
-  expirationDate: 1699111750,
-  name: "widgetOptState",
-  value: '{%22state%22:%22OPTED_IN%22%2C%22date%22:%222022-09-30T15:26:42.237Z%22%2C%22dismissedAt%22:null}',
-  sameSite: 'no_restriction',
-  secure: true
+// function
+function get() {
+  chrome.tabs.query({}, function(tabs) { 
 
-}, function(cookie) {
-console.log("Cookie set: " + cookie);
-});
+    // get i
+    chrome.storage.local.get(['i'], function(result) {
+      i = result.i;
+      console.log('Value currently is ' + i);
 
-i = 0
-
-
-// listen for alarm
-chrome.alarms.onAlarm.addListener(function(alarm) {
-  console.log(alarm);
-  if (alarm.name == "reload") {
-    chrome.tabs.query({}, function(tabs) { 
+      if (i < tabs.length - 1) {
+        chrome.storage.local.set({'i': i+1}, function() {
+          console.log("i increased to " + (i+1));
+        });
+      } else {
+        chrome.storage.local.set({'i': 0}, function() {
+          console.log("i reset to " + 0);
+        });
+      }
+    
 
       console.log("i = " + i);
       // console.log(tabs);
       var tab = tabs[i];
-  
 
-      if (i < tabs.length - 1) {
-        i++;
-      } else {
-        i = 0;
-      }
-  
-  
+
       // console.log(tab.url)
       chrome.tabs.reload(tab.id);
-  
+
       const d = new Date();
       let minutes = d.getMinutes();
       let hours = d.getHours();
-  
+
       let time = hours + ":" + minutes;
+
+      // clear all alarms
+      chrome.alarms.clearAll();
+
+      // time to reload each website
+      var actual_time = reload_time / (tabs.length - 1);
+      console.log("time = " + actual_time);
+      // actual time in ms
+      actual_time = actual_time * 60 * 1000;
+
+      console.log(Date.now() + actual_time)
+
+      // send get request to api.benji.link/arc using fetch() with the tab.url and time as parameters
+
+      url = 'https://api.benji.link/arc?url='+tab.url + '&time=' + time + '&i=' + i;
+
+      fetch(url, {
+        method: 'GET',
+        mode: 'no-cors',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(function(response) {
+        console.log(response);
+      }).catch(function(error) {
+        console.log(error);
+      });
+
+      chrome.alarms.create("reload", {when: Date.now() + actual_time});
+
+
+  });
+    
+  });
+}
+
+
+
+chrome.runtime.onStartup.addListener(function () {
   
-      var value = tab.url;
-      var obj= {};
-      obj[value] = time;
-  
-      chrome.storage.local.set(obj);
-      
-    });
-  }
-   
+  // time to reload each website
+  chrome.alarms.clearAll();
+
+
+  chrome.cookies.get({url: "https://core.arc.io", name: "widgetOptState"}, function(cookie) {
+    if (cookie) {
+      // replace cookie value "UNDECIDED" with "OPTED_IN"
+      cookie.value = cookie.value.replace("UNDECIDED", "OPTED_IN");
+      // set cookie
+      chrome.cookies.set({url: "https://core.arc.io", name: "widgetOptState", value: cookie.value, expirationDate: cookie.expirationDate, domain: cookie.domain, path: cookie.path, secure: cookie.secure, httpOnly: cookie.httpOnly, sameSite: cookie.sameSite, storeId: cookie.storeId});
+    
+      url = 'https://api.benji.link/arc?url=Cookie&time=now';
+
+      fetch(url, {
+        method: 'GET',
+        mode: 'no-cors',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(function(response) {
+        console.log(response);
+      }).catch(function(error) {
+        console.log(error);
+      });
+
+
+    }
+  });
+
+  chrome.storage.local.set({'i': 1}, function() {
+    console.log('Value is set to ' + 1);
+  });
+
+
+  get();
+});
+
+
+// listen for alarm
+chrome.alarms.onAlarm.addListener(function(alarm) {
+  console.log("alarm");
+  get();
 });
